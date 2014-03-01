@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
   }
 
   if (connect(sockfd, info->ai_addr, info->ai_addrlen) == -1) {
-    fprintf(stderr, "Socket connect error!\n");
+    fprintf(stderr, "Unable to connect to gmail server!\n");
     exit(EXIT_FAILURE);
   } else {
     printf("%s\n", "TCP Socket connected!");
