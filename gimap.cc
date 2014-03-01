@@ -118,6 +118,8 @@ int main(int argc, char* argv[]) {
   reply[bytes_read] = '\0';
   fprintf(stdout, "%s", reply);
 
+  SSL_shutdown(ssl);
+
   SSL_CTX_free(ssl_ctx);
   SSL_free(ssl);
   close(sockfd);
