@@ -14,6 +14,12 @@ int main(int argc, char* argv[]) {
     exit(EXIT_FAILURE);
   }
 
+  int sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+  if (sockfd == -1) {
+    fprintf(stderr, "Error creating socket!\n");
+    exit(EXIT_FAILURE);
+  }
+
   struct addrinfo hints;
   memset(&hints, 0, sizeof(hints));
   hints.ai_family = AF_INET;  // AF_UNSPEC
@@ -24,12 +30,6 @@ int main(int argc, char* argv[]) {
   int result = getaddrinfo("imap.gmail.com", "993", &hints, &info);
   if (result != 0) {
     fprintf(stderr, "getaddrinfo failed!\n");
-    exit(EXIT_FAILURE);
-  }
-
-  int sockfd = socket(info->ai_family, info->ai_socktype, info->ai_protocol);
-  if (sockfd == -1) {
-    fprintf(stderr, "Error creating socket!\n");
     exit(EXIT_FAILURE);
   }
 
