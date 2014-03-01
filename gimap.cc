@@ -33,7 +33,8 @@ int main(int argc, char* argv[]) {
     exit(EXIT_FAILURE);
   }
 
-  if (connect(sockfd, info->ai_addr, info->ai_addrlen) == -1) {
+  result = connect(sockfd, info->ai_addr, info->ai_addrlen);
+  if (result == -1) {
     fprintf(stderr, "Unable to connect to gmail server!\n");
     exit(EXIT_FAILURE);
   } else {
