@@ -46,12 +46,10 @@ int main(int argc, char* argv[]) {
   SSL_load_error_strings();
 
   SSL_CTX* ssl_ctx = SSL_CTX_new(SSLv23_client_method());
+
   SSL* ssl = SSL_new(ssl_ctx);
-  result = SSL_set_fd(ssl, sockfd);
-  if (result == 0) {
-    fprintf(stderr, "Operation failed!\n");
-    exit(EXIT_FAILURE);
-  }
+
+  SSL_set_fd(ssl, sockfd);
 
   result = SSL_connect(ssl);
   if (result == 1) {
