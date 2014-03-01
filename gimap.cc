@@ -120,6 +120,9 @@ int main(int argc, char* argv[]) {
 
   SSL_CTX_free(ssl_ctx);
   SSL_free(ssl);
+
+  // Shutdown socket for both read and write.
+  shutdown(sockfd, SHUT_RDWR);
   close(sockfd);
 
   return 0;
