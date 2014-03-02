@@ -47,6 +47,10 @@ int main(int argc, char* argv[]) {
   SSL_load_error_strings();
 
   SSL_CTX* ssl_ctx = SSL_CTX_new(SSLv23_client_method());
+  if (!ssl_ctx) {
+    fprintf(stderr, "Unable to create SSL context!\n");
+    exit(EXIT_FAILURE);
+  }
 
   SSL* ssl = SSL_new(ssl_ctx);
 
