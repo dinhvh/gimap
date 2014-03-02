@@ -101,14 +101,6 @@ int main(int argc, char* argv[]) {
   fprintf(stdout, "%s", reply);
 
 
-//   snprintf(sendline, 1024, "3 FETCH 5 UID\r\n");
-//   SSL_write(ssl, sendline, strlen(sendline));
-//
-//   bytes_read = SSL_read(ssl, sendline, 1024);
-//   sendline[n] = '\0';
-//   fprintf(stderr, "%s", sendline);
-
-
   // Sending logout command.
   snprintf(msg, sizeof(msg), "4 logout\r\n");
   SSL_write(ssl, msg, strlen(msg));
