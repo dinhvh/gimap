@@ -53,8 +53,9 @@ int main(int argc, char* argv[]) {
   SSL_set_fd(ssl, sockfd);
 
   result = SSL_connect(ssl);
-  if (result == 1) {
-    printf("TLS/SSL connection has been established.\n");
+  if (result != 1) {
+    fprintf(stderr, "The TLS/SSL handshake was not successful!\n");
+    exit(EXIT_FAILURE);
   }
 
   // Reading SSL_connect answer.
