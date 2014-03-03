@@ -30,12 +30,15 @@ int main(int argc, char* argv[]) {
   int result = getaddrinfo("imap.gmail.com", "993", &hints, &info);
   if (result != 0) {
     fprintf(stderr, "getaddrinfo failed!\n");
+    // close sockfd - dinhviethoa
     exit(EXIT_FAILURE);
   }
 
   result = connect(sockfd, info->ai_addr, info->ai_addrlen);
   if (result == -1) {
     fprintf(stderr, "Unable to connect to gmail server!\n");
+    // free info - dinhviethoa
+    // close sockfd - dinhviethoa
     exit(EXIT_FAILURE);
   } else {
     printf("%s\n", "TCP Socket connected!");
@@ -48,6 +51,7 @@ int main(int argc, char* argv[]) {
 
   SSL_CTX* ssl_ctx = SSL_CTX_new(SSLv23_client_method());
   if (!ssl_ctx) {
+    // close sockfd - dinhviethoa
     fprintf(stderr, "Unable to create SSL context!\n");
     exit(EXIT_FAILURE);
   }
@@ -58,6 +62,8 @@ int main(int argc, char* argv[]) {
 
   result = SSL_connect(ssl);
   if (result != 1) {
+    // free ssl context - dinhviethoa
+    // close sockfd - dinhviethoa
     fprintf(stderr, "The TLS/SSL handshake was not successful!\n");
     exit(EXIT_FAILURE);
   }
@@ -67,15 +73,28 @@ int main(int argc, char* argv[]) {
   char reply[kMaxLine + 1];
   ssize_t bytes_read = SSL_read(ssl, reply, sizeof(reply));
   if (bytes_read < 0) {
+    // free ssl context - dinhviethoa
+    // close sockfd - dinhviethoa
     int err = SSL_get_error(ssl, bytes_read);
     ERR_print_errors_fp(stderr);
     fprintf(stderr, "SSL_read failed: %d\n", err);
   }
   reply[bytes_read] = '\0';
   fprintf(stdout, "%s", reply);
+  
+  // (1) You should parse the buffer and read more data if needed - dinhviethoa
+  // something like:
+  // int parseok = 0;
+  // buffer read_data = buffer_new();
+  // while (!parseok) {
+  //   ssize_t bytes_read = SSL_read(ssl, reply, sizeof(reply));
+  //   buffer_append(read_data);
+  //   parseok = parse(read_data);
+  // }
 
   // Sending login command.
   char msg[kMaxLine + 1];
+  // Here, LOGIN should at least send quoted string.
   snprintf(msg, sizeof(msg), "1 LOGIN %s %s\r\n", argv[1], argv[2]);
   SSL_write(ssl, msg, strlen(msg));
 
@@ -88,15 +107,17 @@ int main(int argc, char* argv[]) {
   }
   reply[bytes_read] = '\0';
   fprintf(stdout, "%s", reply);
-
+  // same as (1) here - dinhviethoa.
 
   // Sending select command.
   snprintf(msg, sizeof(msg), "2 SELECT INBOX\r\n");
   SSL_write(ssl, msg, strlen(msg));
 
   // Reading select command.
+  // same as (1) here - dinhviethoa.
   bytes_read = SSL_read(ssl, reply, sizeof(reply));
   if (bytes_read < 0) {
+    // cleanup properly - dinhviethoa.
     int err = SSL_get_error(ssl, bytes_read);
     ERR_print_errors_fp(stderr);
     fprintf(stderr, "SSL_read failed: %d\n", err);
@@ -110,6 +131,7 @@ int main(int argc, char* argv[]) {
   SSL_write(ssl, msg, strlen(msg));
 
   // Reading logout command.
+  // same as (1) here - dinhviethoa.
   bytes_read = SSL_read(ssl, reply, sizeof(reply));
   reply[bytes_read] = '\0';
   fprintf(stdout, "%s", reply);
